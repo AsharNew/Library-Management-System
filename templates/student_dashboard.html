@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-user-graduate me-2"></i>Student Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book me-2"></i>My Books</h5>
+                <h2>{{ my_issues|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-rupee-sign me-2"></i>My Fines</h5>
+                <h2>₹{{ my_fines }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('books') }}" class="text-decoration-none">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-search me-2"></i>Browse Books</h5>
+                    <h2><i class="fas fa-arrow-right"></i></h2>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-book-open me-2"></i>Currently Borrowed Books</h5>
+    </div>
+    <div class="card-body">
+        {% if my_issues %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Author</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in my_issues %}
+                <tr>
+                    <td>{{ issue.book.title }}</td>
+                    <td>{{ issue.book.author }}</td>
+                    <td>{{ issue.issue_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ issue.due_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        {% if now > issue.due_date %}
+                            <span class="badge bg-danger">Overdue</span>
+                        {% else %}
+                            <span class="badge bg-success">Active</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">You have no books currently borrowed</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-secondary text-white">
+        <h5><i class="fas fa-history me-2"></i>My Borrowing History</h5>
+    </div>
+    <div class="card-body">
+        {% if my_history %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Issue Date</th>
+                    <th>Return Date</th>
+                    <th>Fine</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in my_history %}
+                <tr>
+                    <td>{{ issue.book.title }}</td>
+                    <td>{{ issue.issue_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ issue.return_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        {% if issue.fine > 0 %}
+                            <span class="text-danger">₹{{ issue.fine }}</span>
+                        {% else %}
+                            <span class="text-success">₹0</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">No borrowing history</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

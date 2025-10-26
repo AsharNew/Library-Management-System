@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-user-tie me-2"></i>Staff Dashboard</h2>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-white bg-warning shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book-open me-2"></i>Pending Issues</h5>
+                <h2>{{ pending_issues|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-white bg-danger shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-exclamation-triangle me-2"></i>Overdue</h5>
+                <h2>{{ overdue_issues|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header bg-danger text-white">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Overdue Books</h5>
+    </div>
+    <div class="card-body">
+        {% if overdue_issues %}
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>User</th>
+                    <th>Due Date</th>
+                    <th>Days Overdue</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in overdue_issues %}
+                <tr>
+                    <td>{{ issue.book.title }}</td>
+                    <td>{{ issue.user.name }}</td>
+                    <td>{{ issue.due_date.strftime('%Y-%m-%d') }}</td>
+                    <td class="text-danger">Overdue</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="returnBook('{{ issue.id }}');">
+                            <i class="fas fa-check me-1"></i>Return
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">No overdue books</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-book-open me-2"></i>All Active Issues</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>User</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for issue in pending_issues %}
+                <tr>
+                    <td>{{ issue.book.title }}</td>
+                    <td>{{ issue.user.name }}</td>
+                    <td>{{ issue.issue_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ issue.due_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-success" onclick="returnBook('{{ issue.id }}');">
+                            <i class="fas fa-undo me-1"></i>Return
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function returnBook(issueId) {
+    if (confirm('Confirm book return?')) {
+        fetch('/return-book/' + issueId, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

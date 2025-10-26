@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Book{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-warning text-dark">
+                <h4><i class="fas fa-edit me-2"></i>Edit Book</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Book Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ book.title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="author" class="form-label">Author</label>
+                        <input type="text" class="form-control" id="author" name="author" value="{{ book.author }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="isbn" class="form-label">ISBN</label>
+                        <input type="text" class="form-control" id="isbn" name="isbn" value="{{ book.isbn }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="Fiction" {% if book.category == 'Fiction' %}selected{% endif %}>Fiction</option>
+                            <option value="Non-Fiction" {% if book.category == 'Non-Fiction' %}selected{% endif %}>Non-Fiction</option>
+                            <option value="Science" {% if book.category == 'Science' %}selected{% endif %}>Science</option>
+                            <option value="Technology" {% if book.category == 'Technology' %}selected{% endif %}>Technology</option>
+                            <option value="History" {% if book.category == 'History' %}selected{% endif %}>History</option>
+                            <option value="Biography" {% if book.category == 'Biography' %}selected{% endif %}>Biography</option>
+                            <option value="Other" {% if book.category == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="{{ book.quantity }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">
+                        <i class="fas fa-save me-2"></i>Update Book
+                    </button>
+                    <a href="{{ url_for('books') }}" class="btn btn-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-left me-2"></i>Cancel
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
